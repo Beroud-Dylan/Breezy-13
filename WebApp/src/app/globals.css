@@ -1,0 +1,40 @@
+@import "tailwindcss";
+@import "flowbite/src/themes/default";
+@import "flowbite";
+
+@theme {
+  --color-rich-black: #011627;
+  --color-folly: #ff3366;
+  --color-sea-green: #2ec4b6;
+  --color-seasalt: #f6f7f8;
+  --color-celestial-blue: #20a4f3;
+  --color-celestial-blue-dark: #1769aa;
+  --color-outer-space: #eceef2;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 0.8s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes fade-in-slow {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-slow {
+  animation: fade-in-slow 1.2s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-down {
+  animation: slide-down 0.8s cubic-bezier(.4,0,.2,1) both;
+}
+
+@keyframes fade-in { from { opacity: 0; transform: scale(0.97);} to { opacity: 1; transform: scale(1);} }
+.animate-fade-in { animation: fade-in 0.18s ease; }

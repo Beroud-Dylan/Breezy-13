@@ -1,0 +1,81 @@
+services:
+  api:
+    build:
+      context: ./API
+      dockerfile: breezy_api.Dockerfile
+    container_name: api
+    ports:
+      - "3001:3000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/breezy_bdd
+      - MONGODB_URI=mongodb://mongodb:27017/breezy_bdd
+      - WEBAPP_ORIGIN=http://localhost:3002
+      - PORT=3000
+    volumes:
+      - ./API:/app
+      - node_modules_api:/app/node_modules
+    networks:
+      - backend
+    depends_on:
+      - mongodb
+    command: ["./wait-for-it.sh", "mongodb", "27017", "npm", "run", "dev"]
+
+  mongodb:
+    build:
+      context: ./Database
+      dockerfile: mongodb.Dockerfile
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/breezy_bdd
+    volumes:
+      - mongo_data:/data/db
+    depends_on:
+      - fileserver
+    networks:
+      - backend
+
+  fileserver:
+    build:
+      context: ./FileServer
+      dockerfile: file_server_api.Dockerfile
+    container_name: fileserver
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+    volumes:
+      - ./FileServer:/app
+      - fileserver_uploads:/app/uploads
+    networks:
+      - backend
+    
+  webapp:
+    build:
+      context: ./WebApp
+      dockerfile: breezy_webapp.Dockerfile
+    container_name: webapp
+    ports:
+      - "3002:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
+      - NEXT_PUBLIC_REFRESH_URL=http://localhost:3001/refresh-token
+      - NEXT_PUBLIC_LOGIN_URL=/login
+      - NEXT_PUBLIC_FILE_SERVER_URL=http://fileserver:5000
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - api
+      - fileserver
+
+volumes:
+  mongo_data:
+  node_modules_api:
+  fileserver_uploads:
+
+networks:
+  frontend:
+  backend:
